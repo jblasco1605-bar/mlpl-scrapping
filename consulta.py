@@ -12,6 +12,12 @@ Flujo de una consulta (funcion hacerConsulta):
     4. Se cruzan con el alquiler (SERPAVI, Numbeo) y el salario oficial (INE).
     5. Se calcula lo que queda al mes y el veredicto.
     6. Se compara con otras ciudades.
+
+Las ofertas (Ticjob, Tecnoempleo) se descargan en cada consulta porque cambian a
+diario y dependen del puesto. El coste de vida (SERPAVI, INE, Numbeo) son datos que
+apenas cambian y tardan en descargarse, asi que se guardan en datos/ y se
+actualizan con actualizarCosteVida() (opcion 2 del menu de consola.py), o solos
+si falta algun CSV.
 """
 import os
 import sys
@@ -23,8 +29,11 @@ import limpieza
 # Los scrapers estan en la carpeta scrapers/ y los usamos como modulos
 CARPETA = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(CARPETA, 'scrapers'))
-import tecnoempleo  # noqa: E402
-import ticjob       # noqa: E402
+import ine_salarios      # noqa: E402
+import numbeo_ciudades   # noqa: E402
+import serpavi_alquiler  # noqa: E402
+import tecnoempleo       # noqa: E402
+import ticjob            # noqa: E402
 
 DATOS = os.path.join(CARPETA, 'datos')
 COLUMNAS = ticjob.cabecera + ['skills']
@@ -57,7 +66,10 @@ def euros(valor):
 
 
 def cargarSerpavi():
-    # Alquiler de pisos por municipio y provincia, con el nombre homogeneizado
+    # Alquiler de pisos por municipio y provincia, con el nombre homogeneizado.
+    # Si faltan los CSV, los genera serpavi_alquiler.py a partir del Excel oficial
+    if leerCsv('serpavi_alquiler_municipios.csv') is None or leerCsv('serpavi_alquiler_provincias.csv') is None:
+        serpavi_alquiler.convertirTodo()
     muni = leerCsv('serpavi_alquiler_municipios.csv')
     prov = leerCsv('serpavi_alquiler_provincias.csv')
     muni = muni[muni['tipologia'] == 'colectiva (pisos)'].copy()
@@ -68,21 +80,64 @@ def cargarSerpavi():
 
 
 def cargarNumbeo():
+    # Si falta el CSV, se descarga en ese momento con numbeo_ciudades.py
     numbeo = leerCsv('numbeo_ciudades.csv')
+    if numbeo is None:
+        numbeo_ciudades.guardar(numbeo_ciudades.scrapear())
+        numbeo = leerCsv('numbeo_ciudades.csv')
     numbeo['ciudad_norm'] = numbeo['ciudad'].map(limpieza.normalizar_ciudad)
     return numbeo
 
 
 def cargarIne():
-    # Nos quedamos con el salario medio bruto de cada comunidad (ambos sexos)
+    # Salario medio bruto de cada comunidad (ambos sexos) del ultimo año disponible.
+    # Si falta el CSV, se descarga en ese momento con ine_salarios.py (API REST del INE)
     ine = leerCsv('ine_salario_ccaa.csv')
+    if ine is None:
+        ine_salarios.descargar()
+        ine = leerCsv('ine_salario_ccaa.csv')
     columna = 'Comunidades y Ciudades Autónomas'
     ine = ine[(ine['Sexo'] == 'Ambos sexos') & (ine['Medidas estadísticas'] == 'Media')
               & (ine[columna] != '')]
+    # Ordenamos por año: al recorrer las filas, el ultimo año sobrescribe a los anteriores
+    ine = ine.sort_values('anio')
     salarios = {}
     for _, fila in ine.iterrows():
         salarios[fila[columna]] = float(fila['valor'])
     return salarios
+
+
+def actualizarCosteVida(avisar=print):
+    """Vuelve a generar los CSV de coste de vida llamando a sus scrapers.
+
+    Devuelve una lista de mensajes (uno por fuente). Si una fuente falla,
+    se mantiene su CSV anterior.
+    """
+    mensajes = []
+    avisar('SERPAVI: convirtiendo el Excel oficial del Ministerio...')
+    try:
+        serpavi_alquiler.convertirTodo()
+        mensajes.append('SERPAVI: actualizado.')
+    except Exception as e:
+        mensajes.append(f'SERPAVI ha fallado ({e}): se mantiene el CSV anterior.')
+
+    avisar('INE: descargando salarios de la API REST...')
+    try:
+        ine_salarios.descargar()
+        mensajes.append('INE: actualizado.')
+    except Exception as e:
+        mensajes.append(f'INE ha fallado ({e}): se mantiene el CSV anterior.')
+
+    avisar('Numbeo: descargando 14 ciudades (tarda alrededor de un minuto)...')
+    try:
+        filas = numbeo_ciudades.scrapear()
+        if len(filas) == 0:
+            raise RuntimeError('no ha devuelto ciudades')
+        numbeo_ciudades.guardar(filas)
+        mensajes.append(f'Numbeo: actualizado ({len(filas)} ciudades).')
+    except Exception as e:
+        mensajes.append(f'Numbeo ha fallado ({e}): se mantiene el CSV anterior.')
+    return mensajes
 
 
 # ---------------------------------------------------------------------------

@@ -14,7 +14,8 @@ python3 consola.py      # en la terminal (sin página web)
 python3 main.py         # página web (abre el navegador)
 ```
 
-- `python3 consola.py` pide puesto y ciudad, muestra todo el resultado en la terminal y lo guarda en `resultado.json`.
+- `python3 consola.py` abre un menú: **1** consultar (pide puesto y ciudad, muestra todo el resultado en la terminal y lo guarda en `resultado.json`), **2** actualizar los datos de coste de vida (vuelve a ejecutar los scrapers de SERPAVI, INE y Numbeo) y **3** salir.
+- Las ofertas (Ticjob, Tecnoempleo) se descargan en cada consulta porque cambian a diario y dependen del puesto. El coste de vida (SERPAVI, INE, Numbeo) apenas cambia y tarda en descargarse, así que se guarda en `datos/` y se actualiza con la opción 2, o solo si falta algún CSV.
 - `python3 main.py` arranca Streamlit y abre el navegador (también funciona `streamlit run main.py`).
 - En VS Code se pueden lanzar con F5 (configuraciones de `.vscode/launch.json`).
 

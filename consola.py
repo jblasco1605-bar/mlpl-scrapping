@@ -3,8 +3,11 @@
 Ejecutar desde la carpeta del proyecto (o con el boton Play de VS Code / Spyder):
     python3 consola.py
 
-Pide un puesto y una ciudad, muestra todo el resultado en la terminal y lo
-guarda en resultado.json.
+Menu con tres opciones:
+    1. Consultar: pide un puesto y una ciudad, muestra todo el resultado en la
+       terminal y lo guarda en resultado.json.
+    2. Actualizar los datos de coste de vida (SERPAVI, INE y Numbeo).
+    3. Salir.
 """
 import json
 import os
@@ -72,33 +75,52 @@ def mostrarResultado(r):
     print(r['ranking'].to_string(index=False))
 
 
+def opcionConsultar():
+    # Opcion 1: consulta de un puesto en una ciudad
+    puesto = input('\nPuesto de trabajo (ej. Programador Python): ').strip()
+    ciudad = input('Ciudad española (ej. Valencia): ').strip()
+    if puesto == '' or ciudad == '':
+        print('Escribe un puesto y una ciudad.')
+        return
+
+    resultado = consulta.hacerConsulta(puesto, ciudad)
+    if resultado['error']:
+        print(resultado['error'])
+        return
+    mostrarResultado(resultado)
+    # Guardamos el resultado en JSON (como en la practica de APIs REST)
+    ruta = os.path.join(consulta.CARPETA, 'resultado.json')
+    with open(ruta, 'w', encoding='utf-8') as f:
+        f.write(json.dumps(consulta.resultadoJson(resultado), indent=4,
+                           ensure_ascii=False, default=float))
+    print('\nResultado guardado en', ruta)
+
+
+def opcionActualizar():
+    # Opcion 2: volver a descargar el coste de vida (SERPAVI, INE y Numbeo)
+    print()
+    for mensaje in consulta.actualizarCosteVida():
+        print('  ', mensaje)
+
+
 # ---------------------------------------------------------------------------
-# Programa principal
+# Programa principal: menu
 # ---------------------------------------------------------------------------
 if __name__ == '__main__':
     print('=' * 46)
     print('  tecnojob · ofertas IT y coste de vida')
     print('  ¿Compensa trabajar aquí?')
     print('=' * 46)
-    seguir = 's'
-    while seguir == 's':
-        puesto = input('\nPuesto de trabajo (ej. Programador Python): ').strip()
-        ciudad = input('Ciudad española (ej. Valencia): ').strip()
-        if puesto == '' or ciudad == '':
-            print('Escribe un puesto y una ciudad.')
-            continue
-
-        resultado = consulta.hacerConsulta(puesto, ciudad)
-        if resultado['error']:
-            print(resultado['error'])
-        else:
-            mostrarResultado(resultado)
-            # Guardamos el resultado en JSON (como en la practica de APIs REST)
-            ruta = os.path.join(consulta.CARPETA, 'resultado.json')
-            with open(ruta, 'w', encoding='utf-8') as f:
-                f.write(json.dumps(consulta.resultadoJson(resultado), indent=4,
-                                   ensure_ascii=False, default=float))
-            print('\nResultado guardado en', ruta)
-
-        seguir = input('\n¿Otra consulta? (s/n): ').strip().lower()
+    opcion = ''
+    while opcion != '3':
+        print('\n1. Consultar un puesto en una ciudad')
+        print('2. Actualizar los datos de coste de vida (SERPAVI, INE y Numbeo)')
+        print('3. Salir')
+        opcion = input('Elige una opción (1, 2 o 3): ').strip()
+        if opcion == '1':
+            opcionConsultar()
+        elif opcion == '2':
+            opcionActualizar()
+        elif opcion != '3':
+            print('Opción no válida.')
     print('¡Hasta luego!')

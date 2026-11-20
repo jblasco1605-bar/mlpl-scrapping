@@ -48,6 +48,13 @@ puesto = col1.text_input('Puesto de trabajo', placeholder='Programador Python, D
 ciudad_escrita = col2.text_input('Ciudad española', placeholder='Madrid, Valencia, Sevilla...')
 buscar = st.button('🔎 Buscar', type='primary')
 
+with st.expander('Actualizar los datos de coste de vida (SERPAVI, INE y Numbeo)'):
+    st.caption('Vuelve a ejecutar sus scrapers. Numbeo tarda alrededor de un minuto.')
+    if st.button('Actualizar ahora'):
+        with st.spinner('Actualizando...'):
+            for mensaje in consulta.actualizarCosteVida(avisar=lambda texto: None):
+                st.write(mensaje)
+
 if buscar and (puesto.strip() == '' or ciudad_escrita.strip() == ''):
     st.error('Escribe un puesto y una ciudad.')
 
