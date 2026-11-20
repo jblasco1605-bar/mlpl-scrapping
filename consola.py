@@ -1,4 +1,4 @@
-"""mlpl scrapping en la terminal (sin pagina web).
+"""tecnojob en la terminal (sin pagina web).
 
 Ejecutar desde la carpeta del proyecto (o con el boton Play de VS Code / Spyder):
     python3 consola.py
@@ -76,7 +76,10 @@ def mostrarResultado(r):
 # Programa principal
 # ---------------------------------------------------------------------------
 if __name__ == '__main__':
-    print('mlpl scrapping: ¿compensa trabajar aquí?')
+    print('=' * 46)
+    print('  tecnojob · ofertas IT y coste de vida')
+    print('  ¿Compensa trabajar aquí?')
+    print('=' * 46)
     seguir = 's'
     while seguir == 's':
         puesto = input('\nPuesto de trabajo (ej. Programador Python): ').strip()

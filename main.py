@@ -1,4 +1,4 @@
-"""mlpl scrapping: ¿compensa trabajar de X en la ciudad Y? (pagina web)
+"""tecnojob: ¿compensa trabajar de X en la ciudad Y? (pagina web)
 
 Es la misma consulta que consola.py, pero en una pagina web hecha con Streamlit.
 La logica (scraping, limpieza y cruce de datos) esta en consulta.py.
@@ -9,6 +9,7 @@ Se puede arrancar de dos formas:
 Para usar el proyecto solo en la terminal, sin pagina web: python3 consola.py
 """
 import json
+import os
 import sys
 
 import pandas as pd
@@ -34,8 +35,11 @@ if __name__ == '__main__':
 # ---------------------------------------------------------------------------
 # Pagina web
 # ---------------------------------------------------------------------------
-st.set_page_config(page_title='mlpl scrapping', page_icon='💼', layout='wide')
-st.title('💼 mlpl scrapping')
+LOGO = os.path.join(consulta.CARPETA, 'logo', 'logo_tecnojob.png')
+ICONO = os.path.join(consulta.CARPETA, 'logo', 'icono_tecnojob.png')
+
+st.set_page_config(page_title='tecnojob', page_icon=ICONO, layout='wide')
+st.image(LOGO, width=340)
 st.write('¿Compensa trabajar aquí? Busca ofertas en **Ticjob** y **Tecnoempleo** y compara el '
          'sueldo neto con el alquiler de la ciudad (**SERPAVI**, **Numbeo** e **INE**).')
 

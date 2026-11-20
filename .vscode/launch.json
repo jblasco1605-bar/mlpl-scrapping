@@ -3,7 +3,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mlpl scrapping (terminal)",
+            "name": "tecnojob (terminal)",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/consola.py",
@@ -12,7 +12,7 @@
             "justMyCode": true
         },
         {
-            "name": "mlpl scrapping (app web)",
+            "name": "tecnojob (app web)",
             "type": "debugpy",
             "request": "launch",
             "module": "streamlit",

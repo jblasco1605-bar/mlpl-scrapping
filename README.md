@@ -1,4 +1,6 @@
-# mlpl scrapping (Proyecto ATD)
+<img src="logo/logo_tecnojob.png" alt="tecnojob" width="360">
+
+# tecnojob (Proyecto ATD)
 
 Cruce de **ofertas de empleo IT** con el **precio del alquiler por ciudad**, para ver en qué ciudades compensa más trabajar. Se priorizan datos **oficiales**.
 
@@ -35,6 +37,8 @@ Se escribe un puesto y una ciudad y todo el resultado sale en una sola consulta:
 - `limpieza.py`: `normalizar_ciudad`, `normalizar_ccaa`, `normalizar_puesto`, `parecido_puesto`, `parsear_salario`, `salario_neto_mensual`.
 - `scrapers/`: un script por fuente (se pueden ejecutar solos desde esa carpeta).
 - `datos/`: CSV de cada fuente (separador `;`, UTF-8).
+- `logo/`: logo e icono de tecnojob.
+- `diagramas/`: arquitectura del proyecto y flujo de una consulta.
 
 ## Fuentes
 

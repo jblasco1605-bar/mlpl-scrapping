@@ -1,4 +1,4 @@
-"""Logica de una consulta de mlpl scrapping (sin interfaz).
+"""Logica de una consulta de tecnojob (sin interfaz).
 
 La usan las dos formas de ejecutar el proyecto:
     - consola.py: en la terminal (input / print).
