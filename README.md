@@ -2,20 +2,23 @@
 
 Cruce de datos de **salarios por tipo de trabajo** con **precios de alquiler por ciudad**, para ver en qué ciudades compensa más trabajar. Se priorizan datos **oficiales**.
 
-## App web: mlpl scrapping
+## mlpl scrapping
 
 ```bash
 pip3 install -r requirements.txt
-python3 main.py
+python3 consola.py      # en la terminal (sin página web)
+python3 main.py         # página web (abre el navegador)
 ```
 
-`python3 main.py` (o el botón ▶ de VS Code / Spyder) arranca Streamlit y abre el navegador. También funciona `streamlit run main.py`.
+`python3 consola.py` pide puesto y ciudad, muestra todo el resultado en la terminal y lo guarda en `resultado.json`. `python3 main.py` arranca Streamlit y abre el navegador (también funciona `streamlit run main.py`). En VS Code también se pueden lanzar con F5 (configuraciones de `.vscode/launch.json`).
 
-Se escribe un puesto y una ciudad y todo el resultado sale en una sola página. La app busca ofertas en Ticjob y Tecnoempleo (requests + BeautifulSoup), se queda con las del puesto y la zona que publican salario, las pasa a neto mensual (`RETENCION` en `limpieza.py`) y las compara con el alquiler de SERPAVI y Numbeo y el salario del INE. Si una web falla, se usa el último CSV de esa fuente en `datos/` y se muestra un aviso. El resultado se puede descargar en JSON. `scrapers/tecnoempleo_selenium.py` es una versión de Tecnoempleo con Selenium que se ejecuta por separado.
+Se escribe un puesto y una ciudad y todo el resultado sale en una sola consulta. La app busca ofertas en Ticjob y Tecnoempleo (requests + BeautifulSoup), se queda con las del puesto y la zona que publican salario, las pasa a neto mensual (`RETENCION` en `limpieza.py`) y las compara con el alquiler de SERPAVI y Numbeo y el salario del INE. Si una web falla, se usa el último CSV de esa fuente en `datos/` y se muestra un aviso. El resultado se puede descargar en JSON. `scrapers/tecnoempleo_selenium.py` es una versión de Tecnoempleo con Selenium que se ejecuta por separado.
 
 En la nube (Streamlit Community Cloud): repositorio de GitHub → share.streamlit.io → *Create app* → archivo `main.py`. Instala lo de `requirements.txt` y usa el tema de `.streamlit/config.toml`. Allí no hay Chrome, así que Tecnoempleo funciona solo con requests (si falla, usa `datos/tecnoempleo.csv`).
 
-- `main.py`: página web (Streamlit) que une scrapers, limpieza y cruce en una sola consulta.
+- `consulta.py`: flujo de una consulta (scrapers → limpieza → cruce con SERPAVI, Numbeo e INE), sin interfaz.
+- `consola.py`: versión de terminal (`input` / `print`).
+- `main.py`: versión web (Streamlit). Usa la misma lógica de `consulta.py`.
 - `limpieza.py`: `normalizar_ciudad`, `normalizar_ccaa`, `normalizar_puesto`, `parecido_puesto`, `parsear_salario`, `salario_neto_mensual`.
 
 ## Estructura

@@ -1,0 +1,25 @@
+{
+    // Ejecutar y depurar (F5). Elige la configuracion en el desplegable de "Ejecutar y depurar".
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "mlpl scrapping (terminal)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/consola.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "mlpl scrapping (app web)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "args": ["run", "${workspaceFolder}/main.py"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
