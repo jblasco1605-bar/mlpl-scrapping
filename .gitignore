@@ -6,3 +6,4 @@ venv/
 .streamlit/secrets.toml
 resultado.json
 .vscode/settings.json
+*.docx

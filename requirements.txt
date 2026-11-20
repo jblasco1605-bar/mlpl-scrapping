@@ -1,7 +1,5 @@
 streamlit==1.67.0
 pandas==3.0.0
-altair==6.3.0
 requests==2.32.5
 beautifulsoup4==4.14.3
 rapidfuzz==3.14.6
-# selenium solo hace falta en local para tecnoempleo_selenium.py (en Streamlit Cloud no hay Chrome)
